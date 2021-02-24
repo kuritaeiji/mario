@@ -1,3 +1,4 @@
+import consts from '../etcs/consts';
 import drawSprite from '../etcs/sprite';
 import vars from '../etcs/vars';
 
@@ -14,8 +15,8 @@ const Right = 1;
 
 export default class {
   constructor() {
-    this.x = 100 << 4;
-    this.y = 100 << 4;
+    this.x = consts.SCREEN_W / 3 << 4;
+    this.y = (consts.SCREEN_ROW - 3) * 16 << 4;
     this.vx = 0;
     this.vy = 0;
     this.defaultSpriteNum = 32;
@@ -82,9 +83,9 @@ export default class {
     }
 
     // 床にいる
-    if (this.y > 100 << 4) {
+    if (this.y > (consts.SCREEN_ROW - 3) * 16 << 4) {
       this.vy = 0;
-      this.y  = 100 << 4;
+      this.y  = (consts.SCREEN_ROW - 3) * 16 << 4;
       this.isJump = false;
       this.jumpCount = 0;
     }
