@@ -47,6 +47,7 @@ export default class {
 
     // 当たり判定
     this.checkFloor();
+    this.checkWall();
 
     this.decideAnimeStatus();
     this.decideSpriteNum();
@@ -148,8 +149,9 @@ export default class {
   }
 
   checkWall() {
-    
+    // 横に移動しないならreturn
+    if (this.vx === 0) { return; }
+    // 壁に当たった場合、vxだけxの位置をマイナス あとでvxをxにプラスするので実質動かない アニメーションをvxで評価する為安易にvx=0に出来ない
+    if (this.marioType.checkWall(this, 0) || this.marioType.checkWall(this, 16)) { this.x -= this.vx; }
   }
 }
-
-// 2, 3, 4, 2, 3, 4...
