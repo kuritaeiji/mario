@@ -1,6 +1,7 @@
 import consts from '../etcs/consts';
 import drawSprite from '../etcs/sprite';
 import vars from '../etcs/vars';
+import SmallMario from './mario_strategy/small_mario';
 
 
 // animeStatus
@@ -33,6 +34,8 @@ export default class {
     this.isBig = false;
     this.isJump = false;
     this.jumpCount = 0;
+
+    this.marioType = new SmallMario();
   }
 
   update() {
@@ -127,13 +130,10 @@ export default class {
     }
   }
 
-  // マリオの足元に何かあるか
   checkFloor() {
+    // 上に行こうとするときはreturn
     if (this.vy < 0) { return; }
-    let lx = (this.x) >> 4;
-    let ty = (this.y) >> 4;
-    let by = this.isBig ? ty + 32 : ty + 16;
-    if (vars.field.isBlock(lx + 3, by) || vars.field.isBlock(lx + 13, by)) {
+    if (this.marioType.checkFloor(this)) {
       // yの速度を0にする
       this.vy = 0;
       // yの位置をブロッックの上にする
@@ -145,6 +145,10 @@ export default class {
     } else {
       if (!this.isJump) { this.vy += GRAVITY; } // ジャンプ中でないなら重力追加
     }
+  }
+
+  checkWall() {
+    
   }
 }
 

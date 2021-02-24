@@ -71,6 +71,7 @@ export default class {
   }
 
   changeCoordinateToMapNum(x, y) {
+    // x, yはビットシフトしてない数値
     let ix = x >> 4;
     let iy = y >> 4;
     return ix + iy * consts.FIELD_COL;
