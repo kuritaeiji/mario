@@ -1,19 +1,27 @@
 const consts1 = {
-  CANVAS_W: 854,
-  CANVAS_H: 480,
+  CANVAS_W: 864,
+  CANVAS_H: 768,
+
+  FIELD_COL: 222,
+  FIELD_ROW: 16,
+
+  SCREEN_COL: 18,
+  SCREEN_ROW: 16,
 
   GAME_SPPED: 1000 / 60,
+
+  BLOCK_SIZE: 16,
 
   can: document.getElementById('can'),
   vcan: document.createElement('canvas')
 };
 
 const consts2 = {
-  SCREEN_W: consts1.CANVAS_W / 3,
-  SCREEN_H: consts1.CANVAS_H / 3,
+  SCREEN_W: consts1.SCREEN_COL * 16,
+  SCREEN_H: consts1.SCREEN_ROW * 16,
 
-  FIELD_W: consts1.CANVAS_W / 3,
-  FIELD_H: consts1.CANVAS_H / 3,
+  FIELD_W: consts1.FIELD_COL * 16,
+  FIELD_H: consts1.FIELD_ROW * 16,
 
   con: consts1.can.getContext('2d'),
   vcon: consts1.vcan.getContext('2d')

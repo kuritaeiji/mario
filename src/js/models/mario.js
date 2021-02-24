@@ -1,5 +1,7 @@
+import consts from '../etcs/consts';
 import drawSprite from '../etcs/sprite';
 import vars from '../etcs/vars';
+import SmallMario from './mario_strategy/small_mario';
 
 
 // animeStatus
@@ -12,10 +14,13 @@ const Jump  = 3;
 const Left  = 0;
 const Right = 1;
 
+const GRAVITY = 6;
+const JumpCoolTime = 10;
+
 export default class {
   constructor() {
-    this.x = 100 << 4;
-    this.y = 100 << 4;
+    this.x = consts.SCREEN_W / 3 << 4;
+    this.y = (consts.SCREEN_ROW - 3) * 16 << 4;
     this.vx = 0;
     this.vy = 0;
     this.defaultSpriteNum = 32;
@@ -29,14 +34,27 @@ export default class {
 
     this.isBig = false;
     this.isJump = false;
-    this.jumpCount = 0;
+    this.jumpCount = 20;
+    this.jumpCoolCounter = 0;
+
+    this.marioType = new SmallMario();
   }
 
   update() {
     this.animeCount++;
+    this.jumpCoolCounter++;
 
+    // 移動
     this.walkOrRun();
-    this.jump();
+    if (this.jumpCoolCounter > JumpCoolTime) {
+      this.jump();
+    }
+
+    // 当たり判定
+    this.checkFloor();
+    this.checkWall();
+    this.checkCeil();
+
     this.decideAnimeStatus();
     this.decideSpriteNum();
 
@@ -67,10 +85,10 @@ export default class {
     if(vars.keys.Space) {
       this.jumpCount++;
       if (this.isJump && this.jumpCount < 20) {
-        this.vy = -60 + this.jumpCount;
+        this.vy = -70 + this.jumpCount;
       }
       if (!this.isJump) {
-        this.vy = -60;
+        this.vy = -70;
         this.isJump = true;
       }
     }
@@ -78,15 +96,7 @@ export default class {
     // ジャンプ中は重力を発生させる
     // 大ジャンプの最初の方だけ重力を小さくする
     if (this.isJump) {
-      this.vy += 6;
-    }
-
-    // 床にいる
-    if (this.y > 100 << 4) {
-      this.vy = 0;
-      this.y  = 100 << 4;
-      this.isJump = false;
-      this.jumpCount = 0;
+      this.vy += GRAVITY;
     }
   }
 
@@ -126,6 +136,43 @@ export default class {
       this.spriteNum += 48;
     }
   }
-}
 
-// 2, 3, 4, 2, 3, 4...
+  checkFloor() {
+    // 上に行こうとするときはreturn
+    if (this.vy < 0) { return; }
+    if (this.marioType.checkFloor(this)) {
+      // yの速度を0にする
+      this.vy = 0;
+      // yの位置をブロッックの上にする
+      let currentRowNum = (this.y >> 4) >> 4;
+      this.y = currentRowNum  * consts.BLOCK_SIZE << 4;
+      // ジャンプ中ならジャンプをやめさせる
+      if (this.isJump) {
+        this.isJump = false;
+        this.jumpCoolCounter = 0;
+        this.jumpCount = 0;
+      }
+    } else {
+      if (!this.isJump) { this.vy += GRAVITY; } // ジャンプ中でないなら重力追加
+    }
+  }
+
+  checkWall() {
+    // 横に移動しないならreturn
+    if (this.vx === 0) { return; }
+    // 壁に当たった場合、vxだけxの位置をマイナス あとでvxをxにプラスするので実質動かない アニメーションをvxで評価する為安易にvx=0に出来ない
+    if (this.marioType.checkWall(this, 0) || this.marioType.checkWall(this, 16)) { this.x -= this.vx; }
+  }
+
+  checkCeil() {
+    // 上に移動していないならreturn
+    if (this.vy >= 0) { return; }
+    let px = (this.x >> 4) + (this.vx >> 4) + 8;
+    let py = (this.y >> 4) + (this.vy >> 4);
+    if (vars.field.isBlock(px, py)) {
+      // ジャンプカウントが20より小さいと大ジャンプと看做され、天井にぶつかってからも初速を与えられ続られ天応にぶつかり続ける為ジャンプカウントに20+
+      this.jumpCount += 20;
+      this.vy = GRAVITY;
+    }
+  }
+}
