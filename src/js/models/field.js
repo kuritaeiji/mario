@@ -30,6 +30,7 @@ export default class {
 
   update() {
     this.mario.update();
+    this.camera.update(this.mario);
   }
 
   draw() {
@@ -39,7 +40,7 @@ export default class {
       let currentCol = i % consts.FIELD_COL;
 
       // 範囲外は描写しない
-      if (minCol - 1 < currentCol && currentCol < maxCol) {
+      if (minCol - 1 < currentCol && currentCol < maxCol + 1) {
         let x = (i % consts.FIELD_COL) * 16 << 4;
         let y = Math.floor(i / consts.FIELD_COL) * 16 << 4;
         drawSprite(spriteNum, x, y);
