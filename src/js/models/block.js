@@ -11,11 +11,11 @@ export default class {
   }
 
   update() {
-    if (this.counter > 10) { 
+    if (this.counter > 30) { 
       this.kill = true;
       vars.field.map[this.mapNum] = this.spriteNum;
     }
-    this.animeY = this.counter % 3;
+    this.animeY = (this.counter >> 2) % 3;
     this.counter++;
   }
 
