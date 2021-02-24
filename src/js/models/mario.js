@@ -15,6 +15,7 @@ const Left  = 0;
 const Right = 1;
 
 const GRAVITY = 6;
+const JumpCoolTime = 10;
 
 export default class {
   constructor() {
@@ -33,17 +34,21 @@ export default class {
 
     this.isBig = false;
     this.isJump = false;
-    this.jumpCount = 0;
+    this.jumpCount = 20;
+    this.jumpCoolCounter = 0;
 
     this.marioType = new SmallMario();
   }
 
   update() {
     this.animeCount++;
+    this.jumpCoolCounter++;
 
     // 移動
     this.walkOrRun();
-    this.jump();
+    if (this.jumpCoolCounter > JumpCoolTime) {
+      this.jump();
+    }
 
     // 当たり判定
     this.checkFloor();
@@ -80,10 +85,10 @@ export default class {
     if(vars.keys.Space) {
       this.jumpCount++;
       if (this.isJump && this.jumpCount < 20) {
-        this.vy = -60 + this.jumpCount;
+        this.vy = -70 + this.jumpCount;
       }
       if (!this.isJump) {
-        this.vy = -60;
+        this.vy = -70;
         this.isJump = true;
       }
     }
@@ -142,8 +147,11 @@ export default class {
       let currentRowNum = (this.y >> 4) >> 4;
       this.y = currentRowNum  * consts.BLOCK_SIZE << 4;
       // ジャンプ中ならジャンプをやめさせる
-      this.isJump = false;
-      this.jumpCount = 0;
+      if (this.isJump) {
+        this.isJump = false;
+        this.jumpCoolCounter = 0;
+        this.jumpCount = 0;
+      }
     } else {
       if (!this.isJump) { this.vy += GRAVITY; } // ジャンプ中でないなら重力追加
     }
