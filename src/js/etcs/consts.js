@@ -10,6 +10,7 @@ const consts1 = {
 
   GAME_SPPED: 1000 / 60,
 
+  BLOCK_SIZE: 16,
 
   can: document.getElementById('can'),
   vcan: document.createElement('canvas')

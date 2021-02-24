@@ -13,6 +13,8 @@ const Jump  = 3;
 const Left  = 0;
 const Right = 1;
 
+const GRAVITY = 6;
+
 export default class {
   constructor() {
     this.x = consts.SCREEN_W / 3 << 4;
@@ -36,8 +38,13 @@ export default class {
   update() {
     this.animeCount++;
 
+    // 移動
     this.walkOrRun();
     this.jump();
+
+    // 当たり判定
+    this.checkFloor();
+
     this.decideAnimeStatus();
     this.decideSpriteNum();
 
@@ -79,15 +86,7 @@ export default class {
     // ジャンプ中は重力を発生させる
     // 大ジャンプの最初の方だけ重力を小さくする
     if (this.isJump) {
-      this.vy += 6;
-    }
-
-    // 床にいる
-    if (this.y > (consts.SCREEN_ROW - 3) * 16 << 4) {
-      this.vy = 0;
-      this.y  = (consts.SCREEN_ROW - 3) * 16 << 4;
-      this.isJump = false;
-      this.jumpCount = 0;
+      this.vy += GRAVITY;
     }
   }
 
@@ -125,6 +124,26 @@ export default class {
 
     if (this.direction === Left) {
       this.spriteNum += 48;
+    }
+  }
+
+  // マリオの足元に何かあるか
+  checkFloor() {
+    if (this.vy < 0) { return; }
+    let lx = (this.x) >> 4;
+    let ty = (this.y) >> 4;
+    let by = this.isBig ? ty + 32 : ty + 16;
+    if (vars.field.isBlock(lx + 3, by) || vars.field.isBlock(lx + 13, by)) {
+      // yの速度を0にする
+      this.vy = 0;
+      // yの位置をブロッックの上にする
+      let currentRowNum = (this.y >> 4) >> 4;
+      this.y = currentRowNum  * consts.BLOCK_SIZE << 4;
+      // ジャンプ中ならジャンプをやめさせる
+      this.isJump = false;
+      this.jumpCount = 0;
+    } else {
+      if (!this.isJump) { this.vy += GRAVITY; } // ジャンプ中でないなら重力追加
     }
   }
 }
