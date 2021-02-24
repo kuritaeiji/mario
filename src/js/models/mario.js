@@ -2,6 +2,7 @@ import consts from '../etcs/consts';
 import drawSprite from '../etcs/sprite';
 import vars from '../etcs/vars';
 import SmallMario from './mario_strategy/small_mario';
+import Block from './block';
 
 
 // animeStatus
@@ -169,10 +170,13 @@ export default class {
     if (this.vy >= 0) { return; }
     let px = (this.x >> 4) + (this.vx >> 4) + 8;
     let py = (this.y >> 4) + (this.vy >> 4);
-    if (vars.field.isBlock(px, py)) {
+    let mapNum = vars.field.isBlock(px, py);
+    if (mapNum) {
       // ジャンプカウントが20より小さいと大ジャンプと看做され、天井にぶつかってからも初速を与えられ続られ天応にぶつかり続ける為ジャンプカウントに20+
       this.jumpCount += 20;
       this.vy = GRAVITY;
+      // アニメション用のボヨヨンとなるブロック生成
+      vars.field.blocks.push(new Block(mapNum));
     }
   }
 }
