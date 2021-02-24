@@ -48,6 +48,7 @@ export default class {
     // 当たり判定
     this.checkFloor();
     this.checkWall();
+    this.checkCeil();
 
     this.decideAnimeStatus();
     this.decideSpriteNum();
@@ -153,5 +154,17 @@ export default class {
     if (this.vx === 0) { return; }
     // 壁に当たった場合、vxだけxの位置をマイナス あとでvxをxにプラスするので実質動かない アニメーションをvxで評価する為安易にvx=0に出来ない
     if (this.marioType.checkWall(this, 0) || this.marioType.checkWall(this, 16)) { this.x -= this.vx; }
+  }
+
+  checkCeil() {
+    // 上に移動していないならreturn
+    if (this.vy >= 0) { return; }
+    let px = (this.x >> 4) + (this.vx >> 4) + 8;
+    let py = (this.y >> 4) + (this.vy >> 4);
+    if (vars.field.isBlock(px, py)) {
+      // ジャンプカウントが20より小さいと大ジャンプと看做され、天井にぶつかってからも初速を与えられ続られ天応にぶつかり続ける為ジャンプカウントに20+
+      this.jumpCount += 20;
+      this.vy = GRAVITY;
+    }
   }
 }
