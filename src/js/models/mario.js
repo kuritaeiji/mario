@@ -64,7 +64,7 @@ export default class {
   }
 
   draw() {
-    drawSprite(this.spriteNum, this.x, this.y, this.isBig);
+    drawSprite(this.spriteNum, this.x, this.y, this.marioType.h);
   }
 
   walkOrRun() {
@@ -171,12 +171,15 @@ export default class {
     let px = (this.x >> 4) + (this.vx >> 4) + 8;
     let py = (this.y >> 4) + (this.vy >> 4);
     let mapNum = vars.field.isBlock(px, py);
+    // mapNumが帰ってくれば衝突
     if (mapNum) {
       // ジャンプカウントが20より小さいと大ジャンプと看做され、天井にぶつかってからも初速を与えられ続られ天応にぶつかり続ける為ジャンプカウントに20+
       this.jumpCount += 20;
       this.vy = GRAVITY;
+      // キノコブロックにどのマップナンバーにぶつかったか報告
+      vars.field.kinokoBlocks.forEach((b) => { b.checkMarioCeilCollision(mapNum); });
       // アニメション用のボヨヨンとなるブロック生成
-      vars.field.blocks.push(new Block(mapNum));
+      if (vars.field.map[mapNum] === 372) { vars.field.blocks.push(new Block(mapNum)); }
     }
   }
 }

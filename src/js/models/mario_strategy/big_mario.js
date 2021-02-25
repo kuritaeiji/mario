@@ -1,6 +1,10 @@
 import vars from "../../etcs/vars";
 
 export default class {
+  constructor() {
+    this.h = 32;
+  }
+
   checkFloor(mario) {
     let lx = (mario.x) >> 4;
     let ty = (mario.y) >> 4;
