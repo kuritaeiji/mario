@@ -3,6 +3,7 @@ import drawSprite from '../etcs/sprite';
 import consts from '../etcs/consts';
 import Camera from './camera';
 import KinokoBlock from './kinoko_block';
+import CoinBlock from './coin_block';
 
 let blType = [
   1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,
@@ -42,6 +43,10 @@ class Field {
       400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,-1,-1,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,352,352,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400
     ];
     this.counter = 0;
+    this.coinBlocks = [];
+    this.map.forEach((spriteNum, mapNum) => {
+      if (spriteNum === 368 && mapNum !== 1346 && mapNum !== 2347) { this.coinBlocks.push(new CoinBlock(spriteNum, mapNum)); }
+    });
   }
 
   update() {
@@ -52,6 +57,7 @@ class Field {
       this.camera.update(this.mario);
       this.blocks.forEach((b) => { b.update(); });
       this.kinokoBlocks.forEach((b, i) => { if (b.kill === true) { this.kinokoBlocks.splice(i, 1); } });
+      this.coinBlocks.forEach((b, i) => { if (b.kill === true) { this.kinokoBlocks.splice(i, 1); } });
       if (this.kinoko) { this.kinoko.update(this.mario); }
     }
   }

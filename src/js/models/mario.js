@@ -182,6 +182,8 @@ export default class {
       this.vy = GRAVITY;
       // キノコブロックにどのマップナンバーにぶつかったか報告
       vars.field.kinokoBlocks.forEach((b) => { b.checkMarioCeilCollision(mapNum); });
+      // コインブロックとぶつかったか報告
+      vars.field.coinBlocks.forEach((b) => { b.checkMarioCeilCollision(mapNum); });
       // アニメション用のボヨヨンとなるブロック生成
       if (vars.field.map[mapNum] === 372) { vars.field.blocks.push(new Block(mapNum)); }
     }
