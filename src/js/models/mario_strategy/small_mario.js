@@ -1,8 +1,16 @@
 import vars from "../../etcs/vars";
 
 export default class {
-  constructor() {
+  constructor(counter) {
     this.h = 16;
+    this.defaultSpriteNum = 32;
+    this.r = 8;
+    this.counter = counter;
+  }
+
+  changeAnime(mario) {
+    mario.x; //特に意味はない
+    return false;
   }
 
   checkFloor(mario) {

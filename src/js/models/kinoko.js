@@ -1,6 +1,7 @@
 import consts from '../etcs/consts';
 import drawSprite from '../etcs/sprite';
 import vars from '../etcs/vars';
+import BigMario from './mario_strategy/big_mario';
 
 export default class {
   constructor(x, y) {
@@ -11,9 +12,10 @@ export default class {
     this.vx = 10;
     this.vy = 0;
     this.kill = false;
+    this.r = 8;
   }
 
-  update() {
+  update(mario) {
     // キノコが上に上がるアニメーション
     if (this.counter <= 15) {
       this.y -= (1 << 4);
@@ -30,6 +32,9 @@ export default class {
       this.x += this.vx;
       this.y += this.vy;
     }
+
+    // マリオとの当たり判定
+    this.checkMario(mario);
 
     if (this.counter <= 16) { this.counter++; }
   }
@@ -65,5 +70,15 @@ export default class {
 
   checkOuterScreen() {
     if (this.x < vars.field.camera.x << 4) { this.kill = true; }
+  }
+
+  checkMario(mario) {
+    let dx = (this.x >> 4) - (mario.x >> 4);
+    let dy = (this.y >> 4) - (mario.y >> 4);
+    if (Math.pow(this.r, 2) + Math.pow(mario.marioType.r, 2) > Math.pow(dx, 2) + Math.pow(dy, 2)) {
+      mario.y -= consts.BLOCK_SIZE << 4;
+      mario.marioType = new BigMario(mario.y);
+      this.kill = true;
+    }
   }
 }

@@ -45,12 +45,15 @@ class Field {
   }
 
   update() {
-    this.counter++;
     this.mario.update();
-    this.camera.update(this.mario);
-    this.blocks.forEach((b) => { b.update(); });
-    this.kinokoBlocks.forEach((b, i) => { if (b.kill === true) { this.kinokoBlocks.splice(i, 1); } });
-    if (this.kinoko) { this.kinoko.update(); }
+    // マリオが変身中はアップデートを止める
+    if (this.mario.marioType.counter >= 30) {
+      this.counter++;
+      this.camera.update(this.mario);
+      this.blocks.forEach((b) => { b.update(); });
+      this.kinokoBlocks.forEach((b, i) => { if (b.kill === true) { this.kinokoBlocks.splice(i, 1); } });
+      if (this.kinoko) { this.kinoko.update(this.mario); }
+    }
   }
 
   draw() {

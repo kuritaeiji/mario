@@ -24,7 +24,6 @@ export default class {
     this.y = (consts.SCREEN_ROW - 3) * 16 << 4;
     this.vx = 0;
     this.vy = 0;
-    this.defaultSpriteNum = 32;
     this.spriteNum = 32;
 
     this.animeStatus = 0;
@@ -33,34 +32,39 @@ export default class {
     this.animeCount = 0;
     this.animeFrame = 2; // ビット
 
-    this.isBig = false;
     this.isJump = false;
     this.jumpCount = 20;
     this.jumpCoolCounter = 0;
 
-    this.marioType = new SmallMario();
+    this.marioType = new SmallMario(100);
   }
 
   update() {
-    this.animeCount++;
-    this.jumpCoolCounter++;
+    // マリオが大きくなるもしくは小さくなるアニメ中はアップデートしない
+    if (!this.marioType.changeAnime(this)) {
+      this.animeCount++;
+      this.jumpCoolCounter++;
 
-    // 移動
-    this.walkOrRun();
-    if (this.jumpCoolCounter > JumpCoolTime) {
-      this.jump();
+      // 移動
+      this.walkOrRun();
+      if (this.jumpCoolCounter > JumpCoolTime) {
+        this.jump();
+      }
+
+      // 当たり判定
+      this.checkFloor();
+      this.checkWall();
+      this.checkCeil();
+
+      this.decideAnimeStatus();
+      this.decideSpriteNum();
+
+      this.x += this.vx;
+      this.y += this.vy;
+    } else {
+      // アニメーション中はスプライトナンバーを変える
+      this.decideSpriteNum();
     }
-
-    // 当たり判定
-    this.checkFloor();
-    this.checkWall();
-    this.checkCeil();
-
-    this.decideAnimeStatus();
-    this.decideSpriteNum();
-
-    this.x += this.vx;
-    this.y += this.vy;
   }
 
   draw() {
@@ -124,13 +128,13 @@ export default class {
   decideSpriteNum() {
     // スプライトナンバーの決定
     if (this.animeStatus === Run) {
-      this.spriteNum = this.defaultSpriteNum + (this.animeCount >> this.animeFrame) % 3 + 2;
+      this.spriteNum = this.marioType.defaultSpriteNum + (this.animeCount >> this.animeFrame) % 3 + 2;
     } else if (this.animeStatus === Walk) {
-      this.spriteNum = this.defaultSpriteNum + (this.animeCount >> (this.animeFrame + 1)) % 3+ 2;
+      this.spriteNum = this.marioType.defaultSpriteNum + (this.animeCount >> (this.animeFrame + 1)) % 3+ 2;
     } else if (this.animeStatus === Jump) {
-      this.spriteNum = this.defaultSpriteNum + 6;
+      this.spriteNum = this.marioType.defaultSpriteNum + 6;
     } else {
-      this.spriteNum = this.defaultSpriteNum;
+      this.spriteNum = this.marioType.defaultSpriteNum;
     }
 
     if (this.direction === Left) {
