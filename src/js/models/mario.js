@@ -2,8 +2,6 @@ import consts from '../etcs/consts';
 import drawSprite from '../etcs/sprite';
 import vars from '../etcs/vars';
 import SmallMario from './mario_strategy/small_mario';
-import Block from './block';
-
 
 // animeStatus
 const Stand = 0;
@@ -180,12 +178,12 @@ export default class {
       // ジャンプカウントが20より小さいと大ジャンプと看做され、天井にぶつかってからも初速を与えられ続られ天応にぶつかり続ける為ジャンプカウントに20+
       this.jumpCount += 20;
       this.vy = GRAVITY;
-      // キノコブロックにどのマップナンバーにぶつかったか報告
-      vars.field.kinokoBlocks.forEach((b) => { b.checkMarioCeilCollision(mapNum); });
-      // コインブロックとぶつかったか報告
-      vars.field.coinBlocks.forEach((b) => { b.checkMarioCeilCollision(mapNum); });
-      // アニメション用のボヨヨンとなるブロック生成
-      if (vars.field.map[mapNum] === 372) { vars.field.blocks.push(new Block(mapNum)); }
+      // // キノコブロックにどのマップナンバーにぶつかったか報告
+      // vars.field.kinokoBlocks.forEach((b) => { b.checkMarioCeilCollision(mapNum); });
+      // // コインブロックとぶつかったか報告
+      // vars.field.coinBlocks.forEach((b) => { b.checkMarioCeilCollision(mapNum); });
+      // ブロックに当たったブロックの位置を知らせる
+      vars.field.blocks.forEach((b) => { b.checkMarioCeilCollision(mapNum); });
     }
   }
 }

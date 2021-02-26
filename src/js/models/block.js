@@ -1,25 +1,19 @@
-import vars from "../etcs/vars";
-
 export default class {
-  constructor(mapNum) {
+  constructor(mapNum, blockType) {
     this.mapNum = mapNum;
-    this.spriteNum = vars.field.map[this.mapNum];
-    this.animeY = 0; // ビットシフトしなくて良い
-    this.counter = 0;
+    this.blockType = blockType;
     this.kill = false;
-    vars.field.map[this.mapNum] = -1;
+  }
+
+  checkMarioCeilCollision(mapNum) {
+    if (this.mapNum === mapNum) { this.blockType.checkMarioCeilCollision(this); }
   }
 
   update() {
-    if (this.counter > 30) { 
-      this.kill = true;
-      vars.field.map[this.mapNum] = this.spriteNum;
-    }
-    this.animeY = (this.counter >> 2) % 3;
-    this.counter++;
+    this.blockType.update(this);
   }
 
   draw() {
-    vars.field.drawObject(this.spriteNum, this.mapNum, 0, -this.animeY);
+    this.blockType.draw(this);
   }
 }
