@@ -1,7 +1,7 @@
 import consts from "./consts";
 
 export default {
-  // ビットシフトされてない座標
+  // ビットシフトされてない座標を返す
   mapNumToX: function (mapNum) {
     return mapNum % consts.FIELD_COL * consts.BLOCK_SIZE;
   },
