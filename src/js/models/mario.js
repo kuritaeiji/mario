@@ -34,16 +34,17 @@ export default class {
     this.jumpCount = 20;
     this.jumpCoolCounter = 0;
 
-    this.kill = false;
+    this.marioType = new SmallMario(this.y, 100);
 
-    this.marioType = new SmallMario(100);
+    this.mutekiCounter = 0;
   }
 
   update() {
-    // マリオが大きくなるもしくは小さくなるアニメ中はアップデートしない
-    if (!this.marioType.changeAnime(this)) {
+    // マリオが大きくなるもしくは小さくなるアニメ中はアップデートしない ゲームオーバーアニメーション中もアップデートしない
+    if (!this.marioType.changeAnime(this) && !this.marioType.gameOver) {
       this.animeCount++;
       this.jumpCoolCounter++;
+      if (this.mutekiCounter) { this.mutekiCounter--; }
 
       // 移動
       this.walkOrRun();
@@ -61,9 +62,13 @@ export default class {
 
       this.x += this.vx;
       this.y += this.vy;
+    } else if (this.marioType.gameOver) {
+      // ゲームオーバーアニメーション
+      this.marioType.gameOverAnimation(this);
     } else {
+      // デカからチビ、チビからデカへのアニメ
       // アニメーション中はスプライトナンバーを変える
-      this.decideSpriteNum();
+      if (!this.marioType.gameOver) { this.decideSpriteNum(); }
     }
   }
 
@@ -180,12 +185,12 @@ export default class {
       // ジャンプカウントが20より小さいと大ジャンプと看做され、天井にぶつかってからも初速を与えられ続られ天応にぶつかり続ける為ジャンプカウントに20+
       this.jumpCount += 20;
       this.vy = GRAVITY;
-      // // キノコブロックにどのマップナンバーにぶつかったか報告
-      // vars.field.kinokoBlocks.forEach((b) => { b.checkMarioCeilCollision(mapNum); });
-      // // コインブロックとぶつかったか報告
-      // vars.field.coinBlocks.forEach((b) => { b.checkMarioCeilCollision(mapNum); });
       // ブロックに当たったブロックの位置を知らせる
       vars.field.blocks.forEach((b) => { b.checkMarioCeilCollision(mapNum); });
     }
+  }
+
+  addDamage() {
+    this.marioType.addDamage(this);
   }
 }

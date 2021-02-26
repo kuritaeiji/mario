@@ -74,7 +74,9 @@ export default class {
       this.state = 0;
       return;
     }
-    if (this.isLeftMario() || this.isRightMario() || this.isBottomMario()) { vars.field.mario.kill = true; }
+    if ((this.isLeftMario() || this.isRightMario() || this.isBottomMario()) && !vars.field.mario.mutekiCounter) { 
+      vars.field.mario.addDamage();
+    }
   }
 
   // 自分の頭上にマリオがいるか
