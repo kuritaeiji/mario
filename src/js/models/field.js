@@ -60,7 +60,7 @@ class Field {
   update() {
     this.mario.update();
     // マリオが変身中もしくは、ゲームオーバーアニメ中はアップデートを止める 
-    if (this.mario.marioType.counter >= 30 || this.mario.marioType.gameOver) {
+    if (this.mario.marioType.counter >= 30 && !this.mario.marioType.gameOver) {
       this.counter++;
       this.camera.update(this.mario);
       this.blocks.forEach((b) => { b.update(); });
