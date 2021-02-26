@@ -34,6 +34,8 @@ export default class {
     this.jumpCount = 20;
     this.jumpCoolCounter = 0;
 
+    this.kill = false;
+
     this.marioType = new SmallMario(100);
   }
 

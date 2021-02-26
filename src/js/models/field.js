@@ -1,11 +1,13 @@
 import Mario from './mario';
 import drawSprite from '../etcs/sprite';
 import consts from '../etcs/consts';
+import functions from '../etcs/functions';
 import Camera from './camera';
 import Block from './block';
 import StandardBlock from './block_strategy/standard_block';
 import KinokoBlock from './block_strategy/kinoko_block';
 import CoinBlock from './block_strategy/coin_block';
+import Clibor from './clibor';
 
 let blType = [
   1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,
@@ -23,9 +25,9 @@ class Field {
   constructor() {
     this.mario = new Mario();
     this.camera = new Camera();
-    // this.kinokoBlocks = [new KinokoBlock(1346), new KinokoBlock(2347)];
     this.kinoko = null;
     this.coins = [];
+    this.enemies = [new Clibor(functions.mapNumToX(2014) << 4, functions.mapNumToY(2014) << 4), new Clibor(functions.mapNumToX(2905) << 4, functions.mapNumToY(2905) << 4)];
     this.map = [
       -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,487,488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
       -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,487,488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,487,488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,487,488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,487,488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,503,504,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
@@ -64,6 +66,7 @@ class Field {
       this.blocks.forEach((b) => { b.update(); });
       if (this.kinoko) { this.kinoko.update(this.mario); }
       this.coins.forEach((c) => { c.update(); });
+      this.enemies.forEach((e) => { e.update(); });
     }
   }
 
@@ -76,20 +79,13 @@ class Field {
       }
       this.drawObject(spriteNum, i);
     });
-    this.mario.draw();
-    for(let i = this.blocks.length - 1; i >= 0; i--) {
-      let block = this.blocks[i];
-      if (block.kill) { return this.blocks.splice(i, 1); }
-      block.draw();
-    }
-    for(let i = this.coins.length - 1; i >= 0; i--) {
-      let coin = this.coins[i];
-      if (coin.kill) { return this.coins.splice(i, 1); }
-      coin.draw();
-    }
+    if (!this.mario.kill) { this.mario.draw(); }
+    this.arrayKillandDraw('blocks');
+    this.arrayKillandDraw('coins');
+    this.arrayKillandDraw('enemies');
     if (this.kinoko) {
       this.kinoko.draw();
-      if (this.kinoko.kill === true) { this.kinoko = null; }
+      if (this.kinoko.kill) { this.kinoko = null; }
     }
   }
 
@@ -108,7 +104,7 @@ class Field {
   }
 
   isBlock(x, y) {
-    // x,yはビットシフトした数値
+    // x,yはビットシフトしてない数値
     let mapNum = this.changeCoordinateToMapNum(x, y);
     let spriteNum = this.map[mapNum];
     if (spriteNum < 368) { return false; }
@@ -118,10 +114,18 @@ class Field {
   }
 
   changeCoordinateToMapNum(x, y) {
-    // x, yはビットシフトしてない数値
+    // x, yはビットシフトした数値
     let ix = x >> 4;
     let iy = y >> 4;
     return ix + iy * consts.FIELD_COL;
+  }
+
+  arrayKillandDraw(propetryName) {
+    for(let i = this[propetryName].length - 1; i >= 0; i--) {
+      let obj = this[propetryName][i];
+      if (obj.kill) { return this[propetryName].splice(i, 1); }
+      obj.draw();
+    }
   }
 }
 
