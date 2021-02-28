@@ -1,5 +1,6 @@
 import consts from "../../etcs/consts";
 import vars from "../../etcs/vars";
+import SmallMario from './small_mario';
 
 export default class {
   constructor(y) {
@@ -42,5 +43,10 @@ export default class {
     let cy = (mario.y >> 4) + (mario.vy >> 4) + 16;
     let by = (mario.y >> 4) + (mario.vy >> 4) + 28;
     return vars.field.isBlock(px, ty) || vars.field.isBlock(px, cy) ||vars.field.isBlock(px, by);
+  }
+
+  addDamage(mario) {
+    mario.marioType = new SmallMario(mario.y);
+    mario.mutekiCounter = 30;
   }
 }
