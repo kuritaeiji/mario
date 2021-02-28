@@ -28,8 +28,7 @@ class Field {
     this.camera = new Camera();
     this.kinoko = null;
     this.coins = [];
-    // this.enemies = [new Clibor(functions.mapNumToX(2905) << 4, functions.mapNumToY(2905) << 4), new Clibor(functions.mapNumToX(2912) << 4, functions.mapNumToY(2912) << 4)];
-    this.enemies = [new Nokonoko(functions.mapNumToX(1788) << 4, functions.mapNumToY(1788) << 4)];
+    this.enemies = [new Clibor(functions.mapNumToX(2905) << 4, functions.mapNumToY(2905) << 4), new Clibor(functions.mapNumToX(2912) << 4, functions.mapNumToY(2912) << 4)];
     this.map = [
       -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,487,488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
       -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,487,488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,487,488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,487,488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,487,488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,503,504,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
@@ -57,6 +56,9 @@ class Field {
         else { this.blocks.push(new Block(mapNum, new CoinBlock())); }
       }
     });
+    this.isPopClibor = false;
+    this.isPopFirstNoko = false;
+    this.isPopSecondNoko = false;
   }
 
   update() {
@@ -70,6 +72,7 @@ class Field {
       this.coins.forEach((c) => { c.update(); });
       this.enemies.forEach((e) => { e.update(); });
       this.popClibor();
+      this.popNokonoko();
     }
   }
 
@@ -133,8 +136,22 @@ class Field {
 
   popClibor() {
     // mapNum2136と2137(の位置にクリボー配置
-    if (this.camera.x + (consts.SCREEN_W * 2) > functions.mapNumToX(2135) && this.enemies.length < 2) {
+    if (this.camera.x + (consts.SCREEN_W * 2) > functions.mapNumToX(2135) && !this.isPopClibor) {
       this.enemies.push(new Clibor(functions.mapNumToX(2135) << 4, functions.mapNumToY(2135) << 4), new Clibor(functions.mapNumToX(2137) << 4, functions.mapNumToY(2137) << 4));
+      this.isPopClibor = true;
+    }
+  }
+
+  popNokonoko() {
+    // mapNum2720にノコノコ配置
+    if (this.camera.x + (consts.SCREEN_W * 2) > functions.mapNumToX(2720) && !this.isPopFirstNoko) {
+      this.enemies.push(new Nokonoko(functions.mapNumToX(2720) << 4, functions.mapNumToY(2720) << 4));
+      this.isPopFirstNoko = true;
+    }
+    // mapNum2840にノコノコ配置
+    if (this.camera.x + (consts.SCREEN_W * 2) > functions.mapNumToX(2840) && !this.isPopSecondNoko) {
+      this.enemies.push(new Nokonoko(functions.mapNumToX(2840) << 4, functions.mapNumToY(2840) << 4));
+      this.isPopSecondNoko = true;
     }
   }
 }
