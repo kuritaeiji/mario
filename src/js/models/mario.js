@@ -193,4 +193,8 @@ export default class {
   addDamage() {
     this.marioType.addDamage(this);
   }
+
+  stepOnNokonoko() {
+    this.vy = -100;
+  }
 }
