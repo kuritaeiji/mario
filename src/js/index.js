@@ -5,7 +5,9 @@ import vars from './etcs/vars';
 import Field from './models/field';
 
 let startTime;
+let gameStartTime = performance.now();
 let frameCount = 0;
+let time = 0;
 
 function gameLoop() {
   let nowTime = performance.now();
@@ -23,6 +25,14 @@ function gameLoop() {
       vars.field.draw();
 
       consts.con.drawImage(consts.vcan, vars.field.camera.x, vars.field.camera.y, consts.SCREEN_W, consts.SCREEN_H, 0, 0, consts.CANVAS_W, consts.CANVAS_H);
+      vars.field.scoreTexts.forEach((t) => { t.draw(); });
+      consts.con.font = '20px "Inpact"';
+      consts.con.fillStyle = 'white';
+      consts.con.fillText('Score: ' + vars.field.score, 10, 20);
+      if (!vars.field.mario.marioType.gameOver) {
+        time = Math.floor((nowTime - gameStartTime) / 1000);
+      }
+      consts.con.fillText('Time: ' + time, 10, 45);
     } else {
       consts.con.fillStyle = 'black';
       consts.con.fillRect(0, 0, consts.CANVAS_W, consts.CANVAS_H);
@@ -41,6 +51,8 @@ function gameRestart() {
 document.addEventListener('keydown', (e) => {
   vars.keys[e.code] = true;
   if (e.code === 'KeyR') {
+    gameStartTime = performance.now();
+    time = 0;
     gameRestart();
   }
 });

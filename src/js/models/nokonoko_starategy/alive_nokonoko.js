@@ -14,6 +14,7 @@ export default class {
       noko.nokonokoType = new DeadNokonoko();
       noko.vx = 0;
       vars.field.mario.stepOnNokonoko();
+      vars.field.addScore(noko.x, noko.y);
       return; // 他当たり判定は行わずreturn
     }
     if ((this.isLeftMario(noko) || this.isRightMario(noko) || this.isBottomMario(noko)) && !vars.field.mario.mutekiCounter) { 

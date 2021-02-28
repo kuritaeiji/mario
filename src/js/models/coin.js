@@ -1,4 +1,5 @@
 import drawSprite from '../etcs/sprite';
+import vars from '../etcs/vars';
 
 export default class {
   constructor(x, y) {
@@ -9,6 +10,7 @@ export default class {
     this.spriteNum = 384;
     this.counter = 0;
     this.kill = false;
+    vars.field.addScore(this.x, this.y);
   }
 
   update() {

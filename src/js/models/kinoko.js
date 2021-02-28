@@ -79,6 +79,7 @@ export default class {
       mario.y -= consts.BLOCK_SIZE << 4;
       mario.marioType = new BigMario(mario.y);
       this.kill = true;
+      vars.field.addScore(this.x, this.y);
     }
   }
 }

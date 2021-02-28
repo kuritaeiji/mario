@@ -72,6 +72,7 @@ export default class {
   checkMario() {
     if (this.isTopMario()) { 
       this.state = 0;
+      vars.field.addScore(this.x, this.y);
       return;
     }
     if ((this.isLeftMario() || this.isRightMario() || this.isBottomMario()) && !vars.field.mario.mutekiCounter) { 

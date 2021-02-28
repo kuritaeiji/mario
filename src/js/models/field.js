@@ -9,6 +9,7 @@ import KinokoBlock from './block_strategy/kinoko_block';
 import CoinBlock from './block_strategy/coin_block';
 import Clibor from './clibor';
 import Nokonoko from './nokonoko';
+import ScoreText from './score_text';
 
 let blType = [
   1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,
@@ -59,6 +60,8 @@ class Field {
     this.isPopClibor = false;
     this.isPopFirstNoko = false;
     this.isPopSecondNoko = false;
+    this.score = 0;
+    this.scoreTexts = [];
   }
 
   update() {
@@ -73,6 +76,7 @@ class Field {
       this.enemies.forEach((e) => { e.update(); });
       this.popClibor();
       this.popNokonoko();
+      this.scoreTexts.forEach((t) => { t.update(); });
     }
   }
 
@@ -93,6 +97,7 @@ class Field {
       this.kinoko.draw();
       if (this.kinoko.kill) { this.kinoko = null; }
     }
+    this.arrayKillandDraw('scoreTexts');
   }
 
   // 一つ一つのオブジェクトを描写
@@ -153,6 +158,16 @@ class Field {
       this.enemies.push(new Nokonoko(functions.mapNumToX(2840) << 4, functions.mapNumToY(2840) << 4));
       this.isPopSecondNoko = true;
     }
+  }
+
+  addScore(x, y) {
+    // ビットシフトした値
+    this.score += 100;
+    let fx = (x >> 4) + 20;
+    let fy = (y >> 4) - 16;
+    let cx = (fx - this.camera.x) * 3;
+    let cy = fy * 3;
+    this.scoreTexts.push(new ScoreText(cx, cy));
   }
 }
 
