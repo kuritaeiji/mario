@@ -60,6 +60,10 @@ export default class {
       this.decideAnimeStatus();
       this.decideSpriteNum();
 
+      // 画面外の判定
+      this.checkOuterScreen();
+      this.checkFallDead();
+
       this.x += this.vx;
       this.y += this.vy;
     } else if (this.marioType.gameOver) {
@@ -188,6 +192,14 @@ export default class {
       // ブロックに当たったブロックの位置を知らせる
       vars.field.blocks.forEach((b) => { b.checkMarioCeilCollision(mapNum); });
     }
+  }
+
+  checkOuterScreen() {
+    if ((this.x + this.vx) >> 4 < vars.field.camera.x) { this.vx = 0; }
+  }
+
+  checkFallDead() {
+    if ((this.y + this.vy) >> 4 > consts.FIELD_H) { this.marioType.gameOver = true; }
   }
 
   addDamage() {
