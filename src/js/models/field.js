@@ -165,8 +165,8 @@ class Field {
     this.score += 100;
     let fx = (x >> 4) + 20;
     let fy = (y >> 4) - 16;
-    let cx = (fx - this.camera.x) * 3;
-    let cy = fy * 3;
+    let cx = (fx - this.camera.x) * 2;
+    let cy = fy * 2;
     this.scoreTexts.push(new ScoreText(cx, cy));
   }
 }

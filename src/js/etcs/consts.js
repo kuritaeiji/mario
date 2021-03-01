@@ -1,6 +1,6 @@
 const consts1 = {
-  CANVAS_W: 864,
-  CANVAS_H: 768,
+  CANVAS_W: 576,
+  CANVAS_H: 512,
 
   FIELD_COL: 222,
   FIELD_ROW: 16,
