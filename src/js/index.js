@@ -14,7 +14,7 @@ function gameLoop() {
   let nowFrame = (nowTime - startTime) / consts.GAME_SPPED;
   if (nowFrame - frameCount > 1) {
     frameCount++;
-    if (!vars.gameOver) {
+    if (!vars.gameOver && !vars.clear) {
       // 更新処理
       vars.field.update();
       // 描画処理
@@ -33,11 +33,19 @@ function gameLoop() {
         time = Math.floor((nowTime - gameStartTime) / 1000);
       }
       consts.con.fillText('Time: ' + time, 10, 45);
-    } else {
+    } else if (vars.gameOver) {
       consts.con.fillStyle = 'black';
       consts.con.fillRect(0, 0, consts.CANVAS_W, consts.CANVAS_H);
       functions.drawText('Game Over', -10);
       functions.drawText('Press R to Retry', 20);
+    } else {
+      // クリア処理
+      consts.con.fillStyle = 'black';
+      consts.con.fillRect(0, 0, consts.CANVAS_W, consts.CANVAS_H);
+      functions.drawText('Clear', -30);
+      functions.drawText('Score: ' + vars.field.score, -10);
+      functions.drawText('Time: ' + time, 10);
+      functions.drawText('Press R to Restart', 30);
     }
   }
   requestAnimationFrame(gameLoop);
@@ -46,11 +54,12 @@ function gameLoop() {
 function gameRestart() {
   vars.field = new Field();
   vars.gameOver = false;
+  vars.clear = false;
 }
 
 document.addEventListener('keydown', (e) => {
   vars.keys[e.code] = true;
-  if (e.code === 'KeyR') {
+  if (e.code === 'KeyR' && (vars.gameOver || vars.clear)) {
     gameStartTime = performance.now();
     time = 0;
     gameRestart();

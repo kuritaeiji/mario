@@ -31,7 +31,7 @@ export default class {
     this.animeFrame = 2; // ビット
 
     this.isJump = false;
-    this.jumpCount = 20;
+    this.jumpCounter = 0;
     this.jumpCoolCounter = 0;
 
     this.marioType = new SmallMario(this.y, 100);
@@ -45,6 +45,9 @@ export default class {
       this.animeCount++;
       this.jumpCoolCounter++;
       if (this.mutekiCounter) { this.mutekiCounter--; }
+
+      // クリア判定
+      this.checkClear();
 
       // 移動
       this.walkOrRun();
@@ -97,9 +100,9 @@ export default class {
     // スペースキーを押し続けるとカウントをふやし、かうんとが10まで初速を与え続け大ジャンプ
     // スペースキーを押したかつジャンプしていない時、初速を与える
     if(vars.keys.Space) {
-      this.jumpCount++;
-      if (this.isJump && this.jumpCount < 20) {
-        this.vy = -70 + this.jumpCount;
+      this.jumpCounter++;
+      if (this.isJump && this.jumpCounter < 20) {
+        this.vy = -70 + this.jumpCounter;
       }
       if (!this.isJump) {
         this.vy = -70;
@@ -164,7 +167,7 @@ export default class {
       if (this.isJump) {
         this.isJump = false;
         this.jumpCoolCounter = 0;
-        this.jumpCount = 0;
+        this.jumpCounter = 0;
       }
     } else {
       if (!this.isJump) { this.vy += GRAVITY; } // ジャンプ中でないなら重力追加
@@ -187,7 +190,7 @@ export default class {
     // mapNumが帰ってくれば衝突
     if (mapNum) {
       // ジャンプカウントが20より小さいと大ジャンプと看做され、天井にぶつかってからも初速を与えられ続られ天応にぶつかり続ける為ジャンプカウントに20+
-      this.jumpCount += 20;
+      this.jumpCounter += 20;
       this.vy = GRAVITY;
       // ブロックに当たったブロックの位置を知らせる
       vars.field.blocks.forEach((b) => { b.checkMarioCeilCollision(mapNum); });
@@ -208,5 +211,9 @@ export default class {
 
   stepOnNokonoko() {
     this.vy = -100;
+  }
+
+  checkClear() {
+    if (this.x > 203 << 4 << 4) { vars.clear = true; }
   }
 }
